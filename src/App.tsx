@@ -45,6 +45,7 @@ function App() {
     }
 
     let tasksForRender;
+    // можно просто воспользоваться обычным if()
     switch (filter) {
         case "completed":
             tasksForRender = tasks.filter(t => t.isDone === true)
