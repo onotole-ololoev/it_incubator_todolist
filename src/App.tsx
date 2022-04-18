@@ -1,70 +1,61 @@
 import React, {useState} from 'react';
 import './App.css';
-import TodoList, {TypePropsTask} from "./TodoList";
-import {v1} from "uuid";
+import {TaskType, TodoList} from './TodoList';
+import {v1} from 'uuid';
 
-
-
-export type FilterValuesType = "all" | "active" | "completed";
+// GUI
+//CLI - command line interface
+// C - create
+// R - read
+// U - update
+// D - delete
+export type FillterValueType = 'All' | 'Active' | 'Completed'
 
 function App() {
-    console.log(v1())
 
-    const title = 'What to learn';
-    let [tasks, setTasks] = useState<Array<TypePropsTask>>([
-        {id: v1(), title: 'HTML', isDone: true},
-        {id: v1(), title: 'CSS', isDone: true},
-        {id: v1(), title: 'JS', isDone: false}
+    const todoListTitle: string = 'what to learn'
+
+    const [tasks, setTasks] = useState([ //state, setState
+        {id: v1(), title: 'HTML&CSS', isDone: true},
+        {id: v1(), title: 'JS', isDone: true},
+        {id: v1(), title: 'React', isDone: false},
     ])
 
-
-
-
-
-    const removeTask = (taskId: string) => {
-        setTasks(tasks.filter(t => t.id !== taskId))
-    }
-// добавляем новую таску
     const addTask = (title: string) => {
-        // const newTask: TypePropsTask = {
-        //     id: v1(),
-        //     title: title,
-        //     isDone: false
-        // }
-        // const copyTasks = [...tasks]
-        // copyTasks.push(newTask)
-        // setTasks(copyTasks)
-
-        setTasks([{id: v1(), title: title, isDone: false}, ...tasks])
+        const newTask: TaskType = {
+            id: v1(), title, isDone: false
+        }
+        setTasks([newTask, ...tasks])
     }
 
-    const [filter, setFilter] = useState<FilterValuesType>("all");
-    const changeFilter = (filter: FilterValuesType) => {
+    const changeTaskStatus = (taskID: string, isDone: boolean) => {
+        setTasks(tasks.map(t => t.id === taskID ? {...t, isDone: isDone} : t))
+    }
+
+    const [filter, setFilter] = useState<'All' | 'Active' | 'Completed'>('All')
+
+    const changeFilter = (filter: FillterValueType) => {
         setFilter(filter)
         console.log(filter)
     }
+//UI^
 
-    let tasksForRender;
-    // можно просто воспользоваться обычным if()
-    switch (filter) {
-        case "completed":
-            tasksForRender = tasks.filter(t => t.isDone === true)
-            break
-        case "active":
-            tasksForRender = tasks.filter(t => t.isDone === false)
-            break
-        default:
-            tasksForRender = tasks
+
+    const removeTask = (taskID: string) => { //2
+        setTasks(tasks.filter(t => t.id !== taskID)) // false
+        return undefined
     }
-
+//BLL:
     return (
         <div className="App">
             <TodoList
-                title={title}
-                task={tasksForRender}
+                title={todoListTitle}
+                tasks={tasks}
+                addTask={addTask}
                 removeTask={removeTask}
                 changeFilter={changeFilter}
-                addTask={addTask}
+                filter={filter}
+                changeTaskStatus={changeTaskStatus}
             />
         </div>
     );
